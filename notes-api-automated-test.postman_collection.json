@@ -1,0 +1,423 @@
+{
+	"info": {
+		"_postman_id": "2c401bf3-2be1-4eb9-a1df-9b9e88c0c406",
+		"name": "Notes API Automated Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18346358"
+	},
+	"item": [
+		{
+			"name": "Adding Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Pastikan response status code bernilai 201\r",
+							"pm.test(\"Response status code should have 201 value\", () => {\r",
+							"    pm.response.to.have.status(201)\r",
+							"})\r",
+							"\r",
+							"// Pastikan header response Content-Type bernilai application/json\r",
+							"pm.test(\"Response type header should have application/json value\", () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8')\r",
+							"})\r",
+							"\r",
+							"// Pastikan body response berupa object \r",
+							"pm.test(\"Response body should an object\", () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object')\r",
+							"})\r",
+							"\r",
+							"// Pastikan body response memiliki properti dan nilai yang sesuai\r",
+							"pm.test(\"Response body should have the correct property and value\", () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseJson).to.ownProperty('status');\r",
+							"    pm.expect(responseJson.status).to.equals('success');\r",
+							"\r",
+							"    pm.expect(responseJson).to.ownProperty('message');\r",
+							"    pm.expect(responseJson.message).to.equals('Catatan berhasil ditambahkan');\r",
+							"\r",
+							"    pm.expect(responseJson).to.ownProperty('data');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"})\r",
+							"\r",
+							"// Pastikan data pada response body memiliki noteId dan nilainya tidak kosong.\r",
+							"pm.test('Response body data should have noteId property and not equals to empty', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseJson.data).to.ownProperty('noteId');\r",
+							"    pm.expect(responseJson.data.noteId).to.not.equals('');\r",
+							"\r",
+							"    pm.environment.set('noteId', responseJson.data.noteId)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Catatan Pertama\",\r\n    \"tags\": [\r\n        \"Node JS\",\r\n        \"Hapi Framework\"\r\n    ],\r\n    \"body\": \"Ini body dari catatan pertama\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/notes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Getting All Notes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Pastikan response memiliki status code 200.\r",
+							"pm.test(\"Response status code should equals to 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Pastikan header response Content-Type memiliki nilai application/json.\r",
+							"pm.test(\"Response type header should equals to application/json\", () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8')\r",
+							"});\r",
+							"\r",
+							"// Pastikan body response adalah object.\r",
+							"pm.test(\"Response body must be object type\", () => {\r",
+							"    pm.expect(pm.response.json()).to.be.an('object');\r",
+							"})\r",
+							"\r",
+							"// Pastikan body response memiliki properti dan nilai atau tipe data yang sesuai.\r",
+							"pm.test(\"Response body should have the correct property and value\", () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseJson).to.ownProperty('status');\r",
+							"    pm.expect(responseJson.status).to.equal('success');\r",
+							"\r",
+							"    pm.expect(responseJson).to.ownProperty('data');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"\r",
+							"    pm.expect(responseJson.data).to.ownProperty('notes');\r",
+							"    pm.expect(responseJson.data.notes).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"// Pastikan data pada response body memiliki array notes dan terdapat minimal 1 item di dalamnya.\r",
+							"pm.test(\"Response body data should have a notes array and contains at least 1 item\", () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseJson.data).to.ownProperty('notes');\r",
+							"    pm.expect(responseJson.data.notes).to.be.an('array');\r",
+							"    pm.expect(responseJson.data.notes).lengthOf.at.least(1);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Catatan Pertama\",\r\n    \"tags\": [\r\n        \"Node JS\",\r\n        \"Hapi Framework\"\r\n    ],\r\n    \"body\": \"Ini body dari catatan pertama\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/notes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Getting Specified Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// astikan response memiliki status code 200.\r",
+							"pm.test(\"Response status code should equals to 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Pastikan header response Content-Type memiliki nilai application/json.\r",
+							"pm.test(\"Response type header should equals to application/json\", () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"// Pastikan body response merupakan object.\r",
+							"pm.test(\"Response body must be object type\", () => {\r",
+							"    pm.expect(pm.response.json()).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"// Pastikan body response memiliki properti dan nilai atau tipe data yang sesuai.\r",
+							"pm.test(\"Response body should have the correct property and value\", () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseJson).to.ownProperty('status');\r",
+							"    pm.expect(responseJson.status).to.equal('success');\r",
+							"\r",
+							"    pm.expect(responseJson).to.ownProperty('data');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"})\r",
+							"\r",
+							"// Pastikan data pada response body memiliki properti note yang merupakan sebuah objek\r",
+							"pm.test(\"response body data should contain note object\", () => {\r",
+							"    const {data} = pm.response.json();\r",
+							"\r",
+							"    pm.expect(data).to.ownProperty('note');\r",
+							"    pm.expect(data.note).to.be.an('object');\r",
+							"})\r",
+							"\r",
+							"// Pastikan objek note di dalam data memiliki properti id, title, body, dan tags  dengan nilai yang sesuai.\r",
+							"pm.test(\"note object should contain correct value for id, title, body, and tags property\", () => {\r",
+							"    const {data: {note}} = pm.response.json();\r",
+							"\r",
+							"    const expectedId = pm.environment.get('noteId');\r",
+							"    const expectedTitle = 'Catatan Pertama';\r",
+							"    const expectedBody = \"Ini body dari catatan pertama\";\r",
+							"    const expectedTags = [\r",
+							"        \"Node JS\",\r",
+							"        \"Hapi Framework\"\r",
+							"    ];\r",
+							"\r",
+							"    pm.expect(note).to.haveOwnProperty('id', expectedId);\r",
+							"    pm.expect(note).to.haveOwnProperty('title', expectedTitle);\r",
+							"    pm.expect(note).to.haveOwnProperty('body', expectedBody);\r",
+							"    pm.expect(note).to.haveOwnProperty('tags').to.eql(expectedTags);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Catatan Pertama\",\r\n    \"tags\": [\r\n        \"Node JS\",\r\n        \"Hapi Framework\"\r\n    ],\r\n    \"body\": \"Ini body dari catatan pertama\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/notes/{{noteId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"notes",
+						"{{noteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Pastikan response memiliki status code 200\r",
+							"pm.test('Response status code should equal to 200', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"// Pastikan header response Content-Type memiliki nilai application/json.\r",
+							"pm.test('Response header type should equal to application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"})\r",
+							"\r",
+							"// Pastikan body response adalah object\r",
+							"pm.test('Response body must be an object', () => {\r",
+							"    pm.expect(pm.response.json()).to.be.an('object');\r",
+							"})\r",
+							"\r",
+							"// Pastikan body response memiliki properti dan nilai yang sesuai.\r",
+							"pm.test('Response body should have the correct property and value', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseJson).to.ownProperty('status').to.equals('success');\r",
+							"    pm.expect(responseJson).to.ownProperty('message').to.equals('Catatan berhasil diperbaharui')\r",
+							"})\r",
+							"\r",
+							"// Ketika mengakses catatan yang diperbarui\r",
+							"pm.test('when request the updated note', () => {\r",
+							"    const noteId = pm.environment.get('noteId');\r",
+							"    pm.sendRequest(`http://localhost:3000/notes/${noteId}`, (err, res) => {\r",
+							"        if (!err) {\r",
+							"            // Pastikan catatan yang diperbarui memiliki nilai terbaru.\r",
+							"            pm.test('then the updated note should contain the latest data', () => {\r",
+							"                const {data: {note}} = res.json();\r",
+							"\r",
+							"                const expectedTitle = 'Catatan Pertama Njir';\r",
+							"                const expectedBody = \"Ini body dari catatan pertama tapi revisi yahaha\";\r",
+							"                const expectedTags = [\r",
+							"                    \"Node JS\",\r",
+							"                    \"Hapi Framework\",\r",
+							"                    \"Njir\"\r",
+							"                ]; \r",
+							"\r",
+							"                pm.expect(note).to.haveOwnProperty('title', expectedTitle);\r",
+							"                pm.expect(note).to.haveOwnProperty('body', expectedBody);\r",
+							"                pm.expect(note).to.haveOwnProperty('tags').to.eql(expectedTags);\r",
+							"            });\r",
+							"        }\r",
+							"    })\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Catatan Pertama Njir\",\r\n    \"tags\": [\r\n        \"Node JS\",\r\n        \"Hapi Framework\",\r\n        \"Njir\"\r\n    ],\r\n    \"body\": \"Ini body dari catatan pertama tapi revisi yahaha\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/notes/{{noteId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"notes",
+						"{{noteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Pastikan response memiliki status code 200\r",
+							"pm.test('Response status code should equal to 200', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"// Pastikan header response Content-Type memiliki nilai application/json.\r",
+							"pm.test('Response header type should equal to application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"})\r",
+							"\r",
+							"// Pastikan body response adalah object\r",
+							"pm.test('Response body must be an object', () => {\r",
+							"    pm.expect(pm.response.json()).to.be.an('object');\r",
+							"})\r",
+							"\r",
+							"// Pastikan body response memiliki properti dan nilai yang sesuai.\r",
+							"pm.test('Response body should have the correct property and value', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseJson).to.ownProperty('status').to.equals('success');\r",
+							"    pm.expect(responseJson).to.ownProperty('message').to.equals('Catatan berhasil dihapus')\r",
+							"})\r",
+							"\r",
+							"// Ketika mengakses catatan yang dihapus\r",
+							"pm.test('when request the deleted note', () => {\r",
+							"    const noteId = pm.environment.get('noteId');\r",
+							"    pm.sendRequest(`http://localhost:3000/notes/${noteId}`, (err, res) => {\r",
+							"        console.log(!err)\r",
+							"        if (!err) {\r",
+							"            // Pastikan catatan yang dihapus tidak ditemukan.\r",
+							"            pm.test('then the deleted note should be not found', () => {\r",
+							"                const {status, message} = res.json();\r",
+							"\r",
+							"                pm.expect(res.code).to.equals(404);\r",
+							"                pm.expect(status).to.equals('fail');\r",
+							"                pm.expect(message).to.equals('Catatan tidak ditemukan');\r",
+							"            })\r",
+							"        }\r",
+							"    })\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/notes/{{noteId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"notes",
+						"{{noteId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
