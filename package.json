@@ -6,7 +6,7 @@
     "type": "module",
     "scripts": {
         "dev": "nodemon .",
-        "start": "SET NODE_ENV=production && node .",
+        "start": "NODE_ENV=production && node .",
         "lint": "eslint ./src"
     },
     "keywords": [],
